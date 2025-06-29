@@ -1,0 +1,27 @@
+body {
+    background-color: black;
+    color: white;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+}
+
+#cursor {
+    display: inline-block;
+    animation: blink 1s steps(2, start) infinite;
+    font-weight: 900;
+}
+
+#cmdout, #cmdin {
+    white-space: pre-wrap;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+@keyframes blink {
+    to {
+        visibility: hidden;
+    }
+}
