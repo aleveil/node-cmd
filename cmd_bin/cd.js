@@ -4,7 +4,7 @@ import path from "path"
 export default function(args, pwd, cmdEnvPath) {
     if (args.length !== 1) {
         return {
-            output: "Bad args: cd [path]"
+            output: "Bad args: cd path"
         }
     }
     let target = args[0].toLowerCase()
