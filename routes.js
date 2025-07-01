@@ -9,7 +9,9 @@ router.post('/cmd', async (req, res) => {
     }
 
     if (!req.body.cmd) {
-        return sendError(res, 400, "cmd not found in body")
+        return res.json({
+            output: ""
+        })
     }
 
     if (!req.body.pwd) {
