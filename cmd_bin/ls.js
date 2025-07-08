@@ -1,5 +1,5 @@
 import fs from "fs"
-import path from "path"
+import { getAbsolutePath } from "./utils/path.js"
 
 export default function (args, pwd, cmdEnvPath) {
     if (args.length >= 2) {
@@ -8,29 +8,22 @@ export default function (args, pwd, cmdEnvPath) {
         }
     }
 
-    let isAbsolute = false
-    let target = "."
-    if (!!args[0]) {
-        target = args[0].toLowerCase()
-        isAbsolute = target.charAt(0) === "/"
-    } 
+    const target = args.length === 1 ? args[0] : ".";
 
-    // Calculate new pwd path like this to prevent getting out of cmd_env
-    let targetPath = isAbsolute ? path.join(target.charAt(0), target.slice(1)) : path.join(pwd, target)
-    let truePath = path.join(cmdEnvPath, targetPath)
+    const targetPath = getAbsolutePath(target, pwd, cmdEnvPath );
 
-    if (!fs.existsSync(truePath)) {
+    if (!fs.existsSync(targetPath)) {
         return {
-            output: `Error: ${args[0]} does not exist`
+            output: `Error: ${target} does not exist`
         }
     }
-    if (!fs.lstatSync(truePath).isDirectory()) {
+    if (!fs.lstatSync(targetPath).isDirectory()) {
         return {
-            output: `Error: ${args[0]} is not a directory`
+            output: `Error: ${target} is not a directory`
         }
     }
 
-    let list = fs.readdirSync(truePath);
+    let list = fs.readdirSync(targetPath);
 
     return {
         output: list.join(" ")
