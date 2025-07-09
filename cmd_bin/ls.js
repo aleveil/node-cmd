@@ -4,7 +4,7 @@ import { getAbsolutePath } from "./utils/path.js"
 export default function (args, pwd, cmdEnvPath) {
     if (args.length >= 2) {
         return {
-            output: "Bad args: ls [path]"
+            output: "Bad args: ls [dir]"
         }
     }
 
