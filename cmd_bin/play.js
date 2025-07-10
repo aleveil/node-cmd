@@ -1,11 +1,11 @@
-import fs from "fs";
+import { getAbsolutePath, getCmdAbsolutePath } from "../utils.js";
 import path from "path";
-import { getAbsolutePath } from "../utils.js";
+import fs from "fs";
 
 export default function (args, pwd, cmdEnvPath) {
     if (args.length !== 1) {
         return {
-            output: "Bad syntax: cat file"
+            output: "Bad syntax: play file"
         };
     }
 
@@ -24,16 +24,18 @@ export default function (args, pwd, cmdEnvPath) {
         };
     }
 
-    const validExt = [".txt"];
+    const validExt = [".mp3", ".wav", ".ogg", ".flac"];
     if (!validExt.includes(path.extname(targetPath))) {
         return {
-            output: `Error: ${target} is not a text file`
+            output: `Error: ${target} is not a valid audio file`
         };
     }
 
-    const data = fs.readFileSync(targetPath, 'utf-8');
-
     return {
-        output: data
+        output: `opening audio player : ${path.basename(target)}`,
+        media: {
+            type: "audio",
+            file: getCmdAbsolutePath(target, pwd)
+        }
     };
 }

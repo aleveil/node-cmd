@@ -1,9 +1,9 @@
-const cmdInEl = document.querySelector("#cmdin")
-const cmdOutEl = document.querySelector("#cmdout")
-let cmdOutText = ""
-let cmdInText = ""
-let pwd = "/"
-let canType = true
+const cmdInEl = document.querySelector("#cmdin");
+const cmdOutEl = document.querySelector("#cmdout");
+let cmdOutText = "";
+let cmdInText = "";
+let pwd = "/";
+let canType = true;
 
 async function sendCmd(cmd) {
     let res = await fetch("/cmd", {
@@ -15,56 +15,68 @@ async function sendCmd(cmd) {
         headers: {
             'Content-Type': 'application/json'
         },
-    })
+    });
     if (!res.ok) {
-        throw new Error("Erreur serveur")
+        throw new Error("Erreur serveur");
     }
-    return await res.json()
+    return await res.json();
 }
 
 function getPrompt() {
-    return pwd + "> "
+    return pwd + "> ";
 }
 
 function setCmdInTxt(txt) {
-    cmdInText = txt
-    cmdInEl.innerHTML = getPrompt() + cmdInText + '<span id="cursor">_</span>'
+    cmdInText = txt;
+    cmdInEl.innerHTML = getPrompt() + cmdInText + '<span id="cursor">_</span>';
 }
 
 function setCmdOutTxt(txt) {
-    cmdOutText = txt
-    cmdOutEl.innerHTML += cmdOutText.toUpperCase() + '\n'
+    cmdOutText = txt;
+    cmdOutEl.innerHTML += cmdOutText.toUpperCase() + '\n';
 }
 
 async function handlePressEnterKey() {
     // Copy input line to output
-    setCmdOutTxt(getPrompt() + cmdInText)
-    const tmpCmd = cmdInText
+    setCmdOutTxt(getPrompt() + cmdInText);
+    const tmpCmd = cmdInText;
 
     // Clear input line
-    cmdInEl.innerHTML = ""
-    canType = false
+    cmdInEl.innerHTML = "";
+    canType = false;
 
     // Send command to server and get response data
-    let data = await sendCmd(tmpCmd)
+    let data = await sendCmd(tmpCmd);
+    console.log(data)
 
     // Set new pwd if needed
-    if (data.newPwd) {
-        pwd = data.newPwd.toUpperCase()
+    if (!!data.newPwd) {
+        pwd = data.newPwd.toUpperCase();
     }
-
-    setCmdInTxt("")
-    canType = true
 
     // Display output
     if (!!data.output) {
-        setCmdOutTxt(data.output)
+        setCmdOutTxt(data.output);
     }
     window.scrollTo(0, document.body.scrollHeight);
+
+    // Open popup media
+    if (!!data?.media?.type && !!data?.media?.file) {
+        const { type, file } = data.media;
+        const url = `/media?type=${type}&file=${encodeURIComponent(file)}`;
+        window.open(`/popup/${type}.html?src=${encodeURIComponent(url)}`, '_blank', 'popup=true,width=400,height=350');
+    }
+
+    // Clear input
+    setCmdInTxt("");
+    canType = true;
+
 }
 
+//CODER LA RECEPTION DU LIEN MEDIA + OUVERURE POP UP
+
 window.addEventListener("keydown", async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!canType) {
         return;
     }
@@ -72,14 +84,14 @@ window.addEventListener("keydown", async (e) => {
         setCmdInTxt(cmdInText.slice(0, -1))
     }
     else if (e.key === "Enter") {
-        await handlePressEnterKey()
+        await handlePressEnterKey();
     }
 
     if (cmdInText.length >= 70) {
         return;
     }
 
-    let regex = /^[A-Za-z0-9 _./-]$/
+    let regex = /^[A-Za-z0-9 _./-]$/;
     if (!regex.test(e.key)) {
         return;
     }
@@ -88,7 +100,7 @@ window.addEventListener("keydown", async (e) => {
         return;
     }
 
-    setCmdInTxt(cmdInText + e.key.toUpperCase())
+    setCmdInTxt(cmdInText + e.key.toUpperCase());
 })
 
-setCmdInTxt("")
+setCmdInTxt("");

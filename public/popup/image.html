@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Viewer</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <p id="filename">filename</p>
+    <img id="imageviewer">
+    <script>
+        const imageViewerEl = document.getElementById("imageviewer");
+        const filenameEl = document.getElementById("filename");
+
+        const params = new URLSearchParams(window.location.search);
+        const src = params.get("src");
+        if (src) {
+            imageViewerEl.src = src;
+            filenameEl.innerText = src.split("%2F").pop();
+        } else {
+            document.body.innerHTML = "<p>Missing file</p>";
+        }
+    </script>
+</body>
+
+</html>

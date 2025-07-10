@@ -1,11 +1,11 @@
-import fs from "fs"
-import { getAbsolutePath } from "./utils/path.js"
+import fs from "fs";
+import { getAbsolutePath } from "../utils.js"
 
 export default function (args, pwd, cmdEnvPath) {
     if (args.length >= 2) {
         return {
-            output: "Bad args: ls [dir]"
-        }
+            output: "Bad syntax: ls [dir]"
+        };
     }
 
     const target = args.length === 1 ? args[0] : ".";
@@ -15,17 +15,17 @@ export default function (args, pwd, cmdEnvPath) {
     if (!fs.existsSync(targetPath)) {
         return {
             output: `Error: ${target} does not exist`
-        }
+        };
     }
     if (!fs.lstatSync(targetPath).isDirectory()) {
         return {
             output: `Error: ${target} is not a directory`
-        }
+        };
     }
 
     let list = fs.readdirSync(targetPath);
 
     return {
         output: list.join(" ")
-    }
+    };
 }
