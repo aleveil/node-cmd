@@ -4,6 +4,8 @@ let cmdOutText = "";
 let cmdInText = "";
 let pwd = "/";
 let canType = true;
+let history = [];
+let historyPos = -1;
 
 async function sendCmd(cmd) {
     let res = await fetch("/cmd", {
@@ -47,7 +49,10 @@ async function handlePressEnterKey() {
 
     // Send command to server and get response data
     let data = await sendCmd(tmpCmd);
-    console.log(data)
+    if (tmpCmd !== "") {
+        history.unshift(tmpCmd);
+        historyPos = -1;
+    }
 
     // Set new pwd if needed
     if (!!data.newPwd) {
@@ -79,6 +84,28 @@ window.addEventListener("keydown", async (e) => {
     e.preventDefault();
     if (!canType) {
         return;
+    }
+    if (e.key === "ArrowUp") {
+        if (historyPos >= history.length - 1) {
+            return;
+        }
+        historyPos++;
+        setCmdInTxt(history[historyPos]);
+
+    }
+    if (e.key === "ArrowDown") {
+        if (historyPos <= -1) {
+            return;
+        }
+
+        historyPos--;
+        
+        if (historyPos === -1) {
+            setCmdInTxt("");
+        }
+        else {
+            setCmdInTxt(history[historyPos]);
+        }
     }
     if (e.key === "Backspace") {
         setCmdInTxt(cmdInText.slice(0, -1))
